@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Simulasi Rangkaian Gerbang Logika</title>
+<style>
+  /* Reset and base styles */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+      Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    background: #d0e7ff; /* Light blue background */
+    color: #6b7280; /* neutral gray */
+    font-size: 18px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  a {
+    color: #111827;
+    text-decoration: none;
+  }
+  a:hover, a:focus {
+    text-decoration: underline;
+  }
+  /* Container */
+  .container {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  /* Header */
+  header {
+    position: sticky;
+    top: 0;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 1rem 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 0.05);
+  }
+  .logo {
+    font-weight: 800;
+    font-size: 1.75rem;
+    color: #1e3a8a;
+    user-select: none;
+  }
+  nav {
+    display: flex;
+    gap: 1.5rem;
+  }
+  nav a {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #4b5563;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  nav a:hover, nav a:focus {
+    background-color: #eff6ff;
+    color: #1e40af;
+  }
+  /* Section spacing */
+  section {
+    margin-bottom: 4rem;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+    border-radius: 0.75rem;
+    background: #ffffff;
+    box-shadow: 0 3px 8px rgb(0 0 0 / 0.05);
+  }
+  section h2 {
+    font-weight: 700;
+    font-size: 2.5rem;
+    color: #1e40af;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  section p, section li {
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    color: #4b5563;
+    font-weight: 500;
+  }
+  section ol, section ul {
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    color: #4b5563;
+  }
+  section ol li, section ul li {
+    margin-bottom: 1rem;
+  }
+  /* Circuit container */
+  .circuit-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2.5rem;
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .gate-box {
+    background: #f0f8ff;
+    border-radius: 0.75rem;
+    box-shadow: 0 8px 24px rgb(30 58 138 / 0.12);
+    padding: 2rem 2.5rem;
+    user-select: none;
+    cursor: default;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: box-shadow 0.3s ease;
+  }
+  .gate-box:hover {
+    box-shadow: 0 12px 36px rgb(59 130 246 / 0.3);
+  }
+  .gate-title {
+    font-weight: 800;
+    font-size: 1.75rem;
+    color: #1e40af;
+    text-align: center;
+    margin-bottom: 1.25rem;
+    text-shadow: 0 1px 2px rgb(59 130 246 / 0.3);
+  }
+  .gate-svg {
+    width: 90px;
+    height: 70px;
+    margin-bottom: 1.5rem;
+    filter: drop-shadow(0 0 6px rgba(37,99,235,0.65));
+  }
+  .inputs, .output {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .input-toggle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+  }
+  .input-toggle input[type="checkbox"] {
+    width: 40px;
+    height: 22px;
+    cursor: pointer;
+    accent-color: #3b82f6;
+    transition: accent-color 0.3s ease;
+  }
+  .input-toggle input[type="checkbox"]:hover {
+    accent-color: #2563eb;
+  }
+  .input-label {
+    font-size: 1rem;
+    color: #2563eb;
+    font-weight: 700;
+    margin-top: 0.4rem;
+  }
+  .output-indicator {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #dbeafe;
+    box-shadow: inset 0 0 20px #93c5fd;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .output-indicator.active {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    box-shadow:
+      0 0 15px #3b82f6,
+      inset 0 0 25px #60a5fa;
+  }
+  button {
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    border: none;
+    color: white;
+    font-weight: 700;
+    padding: 0.85rem 1.6rem;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    user-select: none;
+    font-size: 1.1rem;
+    transition: background 0.3s ease;
+    box-shadow: 0 6px 20px rgb(59 130 246 / 0.4);
+    will-change: transform;
+  }
+  button:hover, button:focus {
+    background: linear-gradient(135deg, #1e40af, #2563eb);
+    outline: none;
+    box-shadow: 0 10px 28px rgb(37 99 235 / 0.7);
+    transform: scale(1.05);
+  }
+  /* Table styling */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 1.25rem;
+    font-size: 1rem;
+  }
+  table th, table td {
+    border: 1px solid #bfdbfe;
+    text-align: center;
+    padding: 0.65rem 0.9rem;
+    color: #1e3a8a;
+  }
+  table thead {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+  }
+  /* Pre block */
+  pre.code-block {
+    background: #f0f9ff;
+    color: #1e40af;
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    overflow-x: auto;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    box-shadow: 0 4px 12px rgb(37 99 235 / 0.25);
+  }
+  /* Timing diagram */
+  .diagram-time {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 1.25rem;
+    font-family: monospace;
+    font-size: 1rem;
+    background: #e0e7ff;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid #93c5fd;
+    border-radius: 0.75rem;
+    box-shadow: inset 0 0 14px #60a5fa;
+  }
+  /* Timing bars */
+  .timing-bar {
+    display: inline-block;
+    margin: 0 6px;
+    width: 24px;
+    height: 30px;
+    vertical-align: middle;
+    border-radius: 6px;
+    background: #c7d9ff;
+    cursor: default;
+    user-select: none;
+    border: 1.5px solid #2563eb;
+    transition: background-color 0.3s ease;
+  }
+  .timing-bar.high {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    box-shadow: 0 0 5px #3b82f6;
+  }
+  .timing-label {
+    display: inline-block;
+    min-width: 60px;
+    text-align: right;
+    margin-right: 12px;
+    font-weight: 700;
+    color: #1e40af;
+  }
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .circuit-container {
+      grid-template-columns: 1fr;
+      padding: 0 1rem;
+    }
+    .gate-box {
+      width: 100%;
+      max-width: none;
+    }
+  }
+  /* Footer */
+  footer {
+    text-align: center;
+    font-size: 0.95rem;
+    color: #93c5fd;
+    padding: 3rem 1rem;
+  }
+</style>
+</head>
+<body>
+
+<header class="container" role="banner" aria-label="Main navigation">
+  <div class="logo">Simulasi Gerbang Logika</div>
+  <nav role="navigation" aria-label="Primary navigation">
+    <a href="#rangkaian">Rangkaian</a>
+    <a href="#trainer-catu-daya">Trainer &amp; Catu Daya</a>
+    <a href="#instruksi">Instruksi</a>
+    <a href="#teori-prinsip">Prinsip Kerja</a>
+    <a href="#analisis">Analisis</a>
+    <a href="#kesimpulan">Kesimpulan</a>
+    <a href="#waktu-diagram-section">Diagram Waktu</a>
+  </nav>
+</header>
+
+<main class="container">
+  <section id="rangkaian" role="region" aria-labelledby="rangkaian-title">
+    <h2 id="rangkaian-title">Rangkaian Gerbang Logika</h2>
+    <div class="circuit-container">
+      <!-- Gerbang AND -->
+      <article class="gate-box" id="and-gate" aria-label="Gerbang AND">
+        <div class="gate-title">Gerbang AND</div>
+        <svg class="gate-svg" viewBox="0 0 100 80" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="and-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#2563eb" />
+              <stop offset="100%" stop-color="#3b82f6" />
+            </linearGradient>
+            <linearGradient id="and-gradient-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#1e40af" />
+              <stop offset="100%" stop-color="#2563eb" />
+            </linearGradient>
+          </defs>
+          <rect x="10" y="10" width="40" height="60" fill="url(#and-gradient)" rx="12" ry="12"/>
+          <path d="M50 10 Q80 40 50 70" fill="url(#and-gradient-dark)" stroke="#1e40af" stroke-width="2"/>
+          <circle cx="25" cy="25" r="6" fill="#3b82f6" />
+          <circle cx="25" cy="55" r="6" fill="#3b82f6" />
+          <circle cx="75" cy="40" r="8" fill="#1e40af"/>
+        </svg>
+        <div class="inputs">
+          <label class="input-toggle" title="Input A (AND)">
+            <input type="checkbox" id="and-input-a" aria-label="Input A gerbang AND"/>
+            <span class="input-label">A</span>
+          </label>
+          <label class="input-toggle" title="Input B (AND)">
+            <input type="checkbox" id="and-input-b" aria-label="Input B gerbang AND"/>
+            <span class="input-label">B</span>
+          </label>
+        </div>
+        <div class="output" title="Output (AND)" aria-live="polite" aria-atomic="true">
+          <div class="output-indicator" id="and-output" tabindex="0" aria-label="Output gerbang AND"></div>
+        </div>
+        <button onclick="testAndGate()" aria-label="Uji Rangkaian Gerbang AND">Uji Rangkaian</button>
+        <div id="and-truth-table" aria-live="polite" aria-atomic="true"></div>
+      </article>
+
+      <!-- Gerbang OR -->
+      <article class="gate-box" id="or-gate" aria-label="Gerbang OR">
+        <div class="gate-title">Gerbang OR</div>
+        <svg class="gate-svg" viewBox="0 0 100 80" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="or-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#2563eb" />
+              <stop offset="100%" stop-color="#3b82f6" />
+            </linearGradient>
+            <linearGradient id="or-gradient-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#1e40af" />
+              <stop offset="100%" stop-color="#2563eb" />
+            </linearGradient>
+          </defs>
+          <path d="M10 10 Q45 40 10 70" fill="url(#or-gradient-dark)" stroke="#1e40af" stroke-width="2"/>
+          <path d="M10 10 Q70 40 10 70" fill="url(#or-gradient)" stroke="#1e40af" stroke-width="2"/>
+          <circle cx="30" cy="25" r="6" fill="#3b82f6" />
+          <circle cx="30" cy="55" r="6" fill="#3b82f6" />
+          <circle cx="75" cy="40" r="8" fill="#1e40af"/>
+        </svg>
+        <div class="inputs">
+          <label class="input-toggle" title="Input A (OR)">
+            <input type="checkbox" id="or-input-a" aria-label="Input A gerbang OR"/>
+            <span class="input-label">A</span>
+          </label>
+          <label class="input-toggle" title="Input B (OR)">
+            <input type="checkbox" id="or-input-b" aria-label="Input B gerbang OR"/>
+            <span class="input-label">B</span>
+          </label>
+        </div>
+        <div class="output" title="Output (OR)" aria-live="polite" aria-atomic="true">
+          <div class="output-indicator" id="or-output" tabindex="0" aria-label="Output gerbang OR"></div>
+        </div>
+        <button onclick="testOrGate()" aria-label="Uji Rangkaian Gerbang OR">Uji Rangkaian</button>
+        <div id="or-truth-table" aria-live="polite" aria-atomic="true"></div>
+      </article>
+
+      <!-- Gerbang NOT -->
+      <article class="gate-box" id="not-gate" aria-label="Gerbang NOT">
+        <div class="gate-title">Gerbang NOT</div>
+        <svg class="gate-svg" viewBox="0 0 100 80" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="not-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#2563eb" />
+              <stop offset="100%" stop-color="#3b82f6" />
+            </linearGradient>
+            <linearGradient id="not-circle-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#3b82f6" />
+              <stop offset="100%" stop-color="#1e40af" />
+            </linearGradient>
+            <linearGradient id="not-input-circle" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#60a5fa" />
+              <stop offset="100%" stop-color="#2563eb" />
+            </linearGradient>
+          </defs>
+          <polygon points="20,10 60,40 20,70" fill="url(#not-gradient)" stroke="#2563eb" stroke-width="2"/>
+          <circle cx="65" cy="40" r="10" fill="url(#not-circle-gradient)" />
+          <circle cx="20" cy="40" r="6" fill="url(#not-input-circle)" />
+        </svg>
+        <div class="inputs" style="justify-content:center;">
+          <label class="input-toggle" title="Input A (NOT)">
+            <input type="checkbox" id="not-input-a" aria-label="Input A gerbang NOT"/>
+            <span class="input-label">A</span>
+          </label>
+        </div>
+        <div class="output" title="Output (NOT)" aria-live="polite" aria-atomic="true">
+          <div class="output-indicator" id="not-output" tabindex="0" aria-label="Output gerbang NOT"></div>
+        </div>
+        <button onclick="testNotGate()" aria-label="Uji Rangkaian Gerbang NOT">Uji Rangkaian</button>
+        <div id="not-truth-table" aria-live="polite" aria-atomic="true"></div>
+      </article>
+
+      <!-- Gerbang EX-OR -->
+      <article class="gate-box" id="xor-gate" aria-label="Gerbang EX-OR">
+        <div class="gate-title">Gerbang EX-OR</div>
+        <svg class="gate-svg" viewBox="0 0 100 80" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="xor-dark-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#1e40af" />
+              <stop offset="100%" stop-color="#2563eb" />
+            </linearGradient>
+            <linearGradient id="xor-light-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#3b82f6" />
+              <stop offset="100%" stop-color="#60a5fa" />
+            </linearGradient>
+            <linearGradient id="xor-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#2563eb" />
+              <stop offset="100%" stop-color="#3b82f6" />
+            </linearGradient>
+          </defs>
+          <path d="M15 10 Q40 40 15 70" fill="none" stroke="url(#xor-light-gradient)" stroke-width="3"/>
+          <path d="M10 10 Q45 40 10 70" fill="none" stroke="url(#xor-fill-gradient)" stroke-width="4"/>
+          <path d="M10 10 Q70 40 10 70" fill="url(#xor-dark-gradient)" stroke="#1e40af" stroke-width="2"/>
+          <circle cx="35" cy="25" r="6" fill="#3b82f6" />
+          <circle cx="35" cy="55" r="6" fill="#3b82f6" />
+          <circle cx="75" cy="40" r="8" fill="#1e40af"/>
+        </svg>
+        <div class="inputs">
+          <label class="input-toggle" title="Input A (XOR)">
+            <input type="checkbox" id="xor-input-a" aria-label="Input A gerbang EX-OR"/>
+            <span class="input-label">A</span>
+          </label>
+          <label class="input-toggle" title="Input B (XOR)">
+            <input type="checkbox" id="xor-input-b" aria-label="Input B gerbang EX-OR"/>
+            <span class="input-label">B</span>
+          </label>
+        </div>
+        <div class="output" title="Output (XOR)" aria-live="polite" aria-atomic="true">
+          <div class="output-indicator" id="xor-output" tabindex="0" aria-label="Output gerbang EX-OR"></div>
+        </div>
+        <button onclick="testXorGate()" aria-label="Uji Rangkaian Gerbang EX-OR">Uji Rangkaian</button>
+        <div id="xor-truth-table" aria-live="polite" aria-atomic="true"></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="trainer-catu-daya" role="region" aria-labelledby="trainer-title">
+    <h2 id="trainer-title">Trainer Digital &amp; Catu Daya DC</h2>
+    <p>Pada simulasi ini, Trainer Digital adalah perangkat yang menyediakan input sinyal digital (0 atau 1), dan Catu Daya DC melambangkan sumber daya rangkaian.</p>
+    <p>Gunakan toggle input di setiap gerbang untuk mensimulasikan kondisi input dari Trainer Digital.</p>
+  </section>
+
+  <section id="instruksi" role="region" aria-labelledby="instruksi-title">
+    <h2 id="instruksi-title">Instruksi Percobaan</h2>
+    <ol>
+      <li><b>Rangkailah rangkaian-rangkaian berikut</b> (sesuai dengan rangkaian percobaan yang tersedia di atas).</li>
+      <li><b>Ujilah rangkaian-rangkaian tersebut</b>, kemudian lihat tabel kebenaran yang dihasilkan.</li>
+      <li><b>Tentukan persamaan logika</b> dari output rangkaian.</li>
+      <li><b>Gambarkan diagram waktu</b> berdasarkan perubahan input yang Anda lakukan secara manual menggunakan toggle input.</li>
+      <li><b>Jelaskan prinsip kerja</b> dari setiap rangkaian gerbang logika.</li>
+      <li><b>Analisis rangkaian</b> berdasarkan hasil percobaan dan tabel kebenaran.</li>
+      <li><b>Buat kesimpulan</b> mengenai fungsi dan perilaku dari masing-masing gerbang logika digital tersebut.</li>
+    </ol>
+  </section>
+
+  <section id="teori-prinsip" role="region" aria-labelledby="teori-title">
+    <h2 id="teori-title">Prinsip Kerja Gerbang Logika</h2>
+    <p>Gerbang logika digital bekerja berdasarkan operasi logika dasar Boolean. Setiap gerbang menerima input biner (0 atau 1) dan menghasilkan output sesuai fungsi logika berikut:</p>
+    <ul>
+      <li><b>AND:</b> Output 1 hanya jika semua input bernilai 1.</li>
+      <li><b>OR:</b> Output 1 jika salah satu atau lebih input bernilai 1.</li>
+      <li><b>NOT:</b> Output adalah negasi dari input (jika input 0, output 1, dan sebaliknya).</li>
+      <li><b>EX-OR (XOR):</b> Output 1 jika jumlah input 1 ganjil (untuk 2 input, output 1 jika input berbeda).</li>
+    </ul>
+  </section>
+
+  <section id="analisis" role="region" aria-labelledby="analisis-title">
+    <h2 id="analisis-title">Analisis Rangkaian</h2>
+    <p>Setelah melakukan simulasi dan mengamati tabel kebenaran, dapat dilakukan analisis sebagai berikut:</p>
+    <ul>
+      <li>Gerbang AND menunjukkan output 1 hanya jika semua input 1, sesuai fungsi Boolean A.B.</li>
+      <li>Gerbang OR memberikan output 1 saat minimal satu input 1, sesuai fungsi Boolean A + B.</li>
+      <li>Gerbang NOT membalikkan nilai input, sesuai fungsi Boolean A'.</li>
+      <li>Gerbang EX-OR mengeluarkan 1 jika input berbeda, cocok untuk deteksi perubahan sinyal.</li>
+    </ul>
+  </section>
+
+  <section id="kesimpulan" role="region" aria-labelledby="kesimpulan-title" >
+    <h2 id="kesimpulan-title">Kesimpulan</h2>
+    <p>Gerbang logika digital merupakan dasar dari sistem digital dan komputer. Melalui percobaan ini, dipahami bahwa setiap gerbang memiliki fungsi unik yang berguna dalam merancang rangkaian logika kompleks.</p>
+  </section>
+
+  <section id="waktu-diagram-section" role="region" aria-labelledby="timing-title">
+    <h2 id="timing-title">Diagram Waktu (Timing Diagram)</h2>
+    <p>Tekan tombol "Mulai Simulasi Waktu" untuk melihat perubahan sinyal input dan output dalam rentang waktu singkat.</p>
+    <button onclick="startTimingSimulation()" aria-label="Mulai Simulasi Waktu">Mulai Simulasi Waktu</button>
+    <div id="timing-diagram" class="diagram-time" aria-live="polite" aria-atomic="true"></div>
+  </section>
+</main>
+
+<script>
+  // Helper functions for gates
+  function andGate(a, b) {
+    return a && b ? 1 : 0;
+  }
+  function orGate(a, b) {
+    return a || b ? 1 : 0;
+  }
+  function notGate(a) {
+    return a ? 0 : 1;
+  }
+  function xorGate(a, b) {
+    return (a ^ b) ? 1 : 0;
+  }
+
+  // Render truth table given inputs and output function
+  function renderTruthTable(inputsCount, outputFunc, containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    let html = '<table aria-label="Tabel Kebenaran"><thead><tr>';
+    for(let i=0; i < inputsCount; i++) {
+      html += `<th>Input ${String.fromCharCode(65 + i)}</th>`;
+    }
+    html += '<th>Output</th></tr></thead><tbody>';
+    const rows = Math.pow(2, inputsCount);
+    for(let i=0; i < rows; i++) {
+      const inputs = [];
+      for(let bit=inputsCount-1; bit>=0; bit--) {
+        inputs.push((i >> bit) & 1);
+      }
+      const out = outputFunc(...inputs);
+      html += '<tr>';
+      inputs.forEach(val => html += `<td>${val}</td>`);
+      html += `<td>${out}</td>`;
+      html += '</tr>';
+    }
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  }
+
+  // Update output indicator for gates
+  function setOutputIndicator(id, active) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if(active) {
+      el.classList.add('active');
+      el.setAttribute('aria-pressed', 'true');
+    } else {
+      el.classList.remove('active');
+      el.setAttribute('aria-pressed', 'false');
+    }
+  }
+
+  // Test functions for each gate
+  function testAndGate() {
+    const a = document.getElementById('and-input-a').checked ? 1 : 0;
+    const b = document.getElementById('and-input-b').checked ? 1 : 0;
+    const output = andGate(a, b);
+    setOutputIndicator('and-output', output === 1);
+    renderTruthTable(2, andGate, 'and-truth-table');
+  }
+  function testOrGate() {
+    const a = document.getElementById('or-input-a').checked ? 1 : 0;
+    const b = document.getElementById('or-input-b').checked ? 1 : 0;
+    const output = orGate(a, b);
+    setOutputIndicator('or-output', output === 1);
+    renderTruthTable(2, orGate, 'or-truth-table');
+  }
+  function testNotGate() {
+    const a = document.getElementById('not-input-a').checked ? 1 : 0;
+    const output = notGate(a);
+    setOutputIndicator('not-output', output === 1);
+    renderTruthTable(1, notGate, 'not-truth-table');
+  }
+  function testXorGate() {
+    const a = document.getElementById('xor-input-a').checked ? 1 : 0;
+    const b = document.getElementById('xor-input-b').checked ? 1 : 0;
+    const output = xorGate(a, b);
+    setOutputIndicator('xor-output', output === 1);
+    renderTruthTable(2, xorGate, 'xor-truth-table');
+  }
+
+  // Auto test on input change
+  document.querySelectorAll("#and-input-a, #and-input-b").forEach(el => {
+    el.addEventListener('change', testAndGate);
+  });
+  document.querySelectorAll("#or-input-a, #or-input-b").forEach(el => {
+    el.addEventListener('change', testOrGate);
+  });
+  document.querySelector("#not-input-a").addEventListener('change', testNotGate);
+  document.querySelectorAll("#xor-input-a, #xor-input-b").forEach(el => {
+    el.addEventListener('change', testXorGate);
+  });
+
+  // Initialize all gates truth tables on load
+  window.addEventListener('load', () => {
+    testAndGate();
+    testOrGate();
+    testNotGate();
+    testXorGate();
+  });
+
+  // Timing Diagram Simulation
+  function startTimingSimulation() {
+    const timingArea = document.getElementById('timing-diagram');
+    if (!timingArea) return;
+    const sequenceLength = 8;
+    // Input sequences for simulation demo
+    const inputSeqA = [0,0,1,1,0,0,1,1];
+    const inputSeqB = [0,1,0,1,0,1,0,1];
+    timingArea.innerHTML = '';
+
+    // Timeline labels
+    const timeline = document.createElement('div');
+    timeline.setAttribute('aria-hidden', 'true');
+    timeline.style.marginBottom = '12px';
+    for(let i=0; i<sequenceLength; i++) {
+      const lbl = document.createElement('div');
+      lbl.style.display = 'inline-block';
+      lbl.style.width = '24px';
+      lbl.style.margin = '0 5px';
+      lbl.style.textAlign = 'center';
+      lbl.style.fontWeight = '700';
+      lbl.style.color = '#1e40af';
+      lbl.textContent = i+1;
+      timeline.appendChild(lbl);
+    }
+    timingArea.appendChild(timeline);
+
+    function createTimingRow(label, values) {
+      const row = document.createElement('div');
+      const labelDiv = document.createElement('span');
+      labelDiv.className = 'timing-label';
+      labelDiv.textContent = label;
+      row.appendChild(labelDiv);
+      values.forEach(v => {
+        const bar = document.createElement('span');
+        bar.className = 'timing-bar ' + (v === 1 ? 'high' : 'low');
+        bar.setAttribute('aria-label', v === 1 ? 'High' : 'Low');
+        bar.title = (v === 1 ? '1 (High)' : '0 (Low)');
+        row.appendChild(bar);
+      });
+      return row;
+    }
+
+    // Generate outputs from inputs
+    const outAND = inputSeqA.map((v,i) => andGate(v, inputSeqB[i]));
+    const outOR = inputSeqA.map((v,i) => orGate(v, inputSeqB[i]));
+    const outXOR = inputSeqA.map((v,i) => xorGate(v, inputSeqB[i]));
+    const outNOT = inputSeqA.map(v => notGate(v));
+
+    timingArea.appendChild(createTimingRow('Input A', inputSeqA));
+    timingArea.appendChild(createTimingRow('Input B', inputSeqB));
+    timingArea.appendChild(createTimingRow('AND', outAND));
+    timingArea.appendChild(createTimingRow('OR', outOR));
+    timingArea.appendChild(createTimingRow('XOR', outXOR));
+    timingArea.appendChild(createTimingRow('NOT A', outNOT));
+  }
+</script>
+
+<footer>
+  &copy; 2024 Simulasi Gerbang Logika Digital. Semua hak cipta dilindungi.
+</footer>
+
+</body>
+</html>
+
