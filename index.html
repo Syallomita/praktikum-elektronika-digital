@@ -1,354 +1,792 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Digital Logic Gates Trainer</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-  :root {
-    --color-bg: #0f172a;
-    --color-card-bg: rgba(30, 41, 59, 0.9);
-    --color-primary: #7c3aed;
-    --color-primary-light: #a78bfa;
-    --color-secondary: #14b8a6;
-    --color-text-primary: #e0e7ff;
-    --color-text-secondary: #94a3b8;
-    --radius: 16px;
-    --gap: 24px;
-    --font-family: 'Poppins', sans-serif;
-  }
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
-  body {
-    margin: 0;
-    font-family: var(--font-family);
-    background: linear-gradient(135deg, #1e293b, #111827);
-    color: var(--color-text-primary);
-    min-height: 100vh;
-    padding: 32px 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  h1 {
-    font-weight: 600;
-    font-size: 2.5rem;
-    margin-bottom: 48px;
-    color: var(--color-primary-light);
-    text-shadow: 0 0 10px var(--color-primary);
-  }
-  section {
-    background: var(--color-card-bg);
-    border-radius: var(--radius);
-    padding: 32px 40px;
-    box-shadow: 0 10px 30px rgba(124, 58, 237, 0.5);
-    max-width: 720px;
-    width: 100%;
-    margin-bottom: 56px;
-    transition: transform 0.3s ease;
-  }
-  section:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 45px rgba(124, 58, 237, 0.7);
-  }
-  h2 {
-    font-weight: 600;
-    font-size: 2rem;
-    margin-bottom: 12px;
-    color: var(--color-primary);
-  }
-  p {
-    color: var(--color-text-secondary);
-    font-size: 1.1rem;
-    line-height: 1.5;
-    margin-bottom: 24px;
-  }
-  label {
-    cursor: pointer;
-    user-select: none;
-    font-weight: 600;
-    color: var(--color-text-primary);
-    font-size: 1.1rem;
-    margin-right: 32px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-  input[type="checkbox"] {
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-    accent-color: var(--color-primary);
-    border-radius: 6px;
-    transition: box-shadow 0.3s;
-  }
-  input[type="checkbox"]:focus-visible {
-    outline-offset: 4px;
-    outline: 3px solid var(--color-primary-light);
-    box-shadow: 0 0 8px var(--color-primary-light);
-  }
-  .output {
-    font-weight: 700;
-    font-size: 2rem;
-    margin: 20px 0 32px 0;
-    color: var(--color-secondary);
-    text-align: center;
-    letter-spacing: 3px;
-    user-select: none;
-  }
-  button.show-truth-btn {
-    display: block;
-    margin: 0 auto 24px auto;
-    background: transparent;
-    border: 2px solid var(--color-primary);
-    color: var(--color-primary-light);
-    font-weight: 600;
-    font-size: 1.1rem;
-    padding: 12px 24px;
-    border-radius: var(--radius);
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
-    user-select: none;
-  }
-  button.show-truth-btn:hover,
-  button.show-truth-btn:focus-visible {
-    background-color: var(--color-primary);
-    color: var(--color-text-primary);
-    box-shadow: 0 0 12px var(--color-primary-light);
-    outline: none;
-  }
-  table.truth-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 8px;
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    display: none;
-  }
-  table.truth-table thead tr {
-    background: var(--color-primary);
-  }
-  table.truth-table th,
-  table.truth-table td {
-    padding: 14px 16px;
-    font-weight: 600;
-    text-align: center;
-    color: var(--color-text-primary);
-  }
-  table.truth-table tbody tr:nth-child(even) {
-    background-color: rgba(255,255,255,0.05);
-  }
-  table.truth-table tbody tr:hover {
-    background-color: rgba(124, 58, 237, 0.15);
-  }
-  pre {
-    background: rgba(255 255 255 / 0.1);
-    padding: 14px 20px;
-    border-radius: var(--radius);
-    user-select: text;
-    overflow-x: auto;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--color-primary-light);
-    margin-top: 16px;
-  }
-  @media (max-width: 480px) {
-    body {
-      padding: 16px 12px;
-    }
-    section {
-      padding: 24px 20px;
-    }
-    button.show-truth-btn {
-      width: 100%;
-      font-size: 1rem;
-      padding: 10px 0;
-      margin-bottom: 20px;
-    }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulator Rangkaian Logika Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        #workspace {
+            width: 100%;
+            height: 500px;
+            border: 2px dashed #94a3b8;
+            position: relative;
+            overflow: hidden;
+            background-color: #f8fafc;
+        }
+        .gate {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            border: 2px solid #334155;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: move;
+            user-select: none;
+            z-index: 10;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .gate:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .gate.active {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        .gate-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #1e293b;
+        }
+        .connector {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #94a3b8;
+            position: absolute;
+            cursor: pointer;
+            z-index: 20;
+        }
+        .input-connector {
+            left: -8px;
+        }
+        .output-connector {
+            right: -8px;
+        }
+        .connector:hover {
+            background-color: #3b82f6;
+            transform: scale(1.2);
+        }
+        .connector.active {
+            background-color: #10b981;
+            transform: scale(1.3);
+        }
+        .wire {
+            position: absolute;
+            background-color: #64748b;
+            height: 2px;
+            transform-origin: left center;
+            z-index: 5;
+        }
+        .wire.active {
+            background-color: #10b981;
+        }
+        .truth-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .truth-table th, .truth-table td {
+            border: 1px solid #cbd5e1;
+            padding: 0.5rem;
+            text-align: center;
+        }
+        .truth-table th {
+            background-color: #e2e8f0;
+        }
+        .truth-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        #palette {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .palette-gate {
+            padding: 0.5rem 1rem;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+            font-weight: 500;
+        }
+        .palette-gate:hover {
+            background-color: #cbd5e1;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            user-select: none;
+            border: none;
+        }
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+        .output-display {
+            width: 80px;
+            height: 80px;
+            background-color: #f8fafc;
+            border: 2px solid #334155;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            z-index: 10;
+        }
+        .output-display.active {
+            border-color: #10b981;
+            background-color: #d1fae5;
+        }
+        .output-label {
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #1e293b;
+        }
+        .output-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #10b981;
+        }
+        .output-value.false {
+            color: #ef4444;
+        }
+        .output-led {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #ef4444;
+            margin-top: 5px;
+        }
+        .output-led.active {
+            background-color: #10b981;
+            box-shadow: 0 0 10px #10b981;
+        }
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
 </head>
-<body>
-<h1>Digital Logic Gates Trainer</h1>
+<body class="p-6 bg-slate-50">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold text-slate-800 mb-2">Simulator Rangkaian Logika Digital</h1>
+        <p class="text-slate-600 mb-6">Drag and drop gerbang logika ke workspace, sambungkan input dan output untuk melihat hasil operasi logika.</p>
+        
+        <div id="palette">
+            <div class="palette-gate" data-type="AND">AND</div>
+            <div class="palette-gate" data-type="OR">OR</div>
+            <div class="palette-gate" data-type="NOT">NOT</div>
+            <div class="palette-gate" data-type="NAND">NAND</div>
+            <div class="palette-gate" data-type="NOR">NOR</div>
+            <div class="palette-gate" data-type="XOR">XOR</div>
+            <div class="palette-gate" data-type="XNOR">XNOR</div>
+            <div class="palette-gate" data-type="INPUT">Input</div>
+            <div class="palette-gate" data-type="OUTPUT">Output</div>
+        </div>
+        
+        <div class="flex gap-2 mb-4">
+            <button id="btn-evaluate" class="btn btn-primary">Evaluasi Rangkaian</button>
+            <button id="btn-clear" class="btn btn-danger">Bersihkan Workspace</button>
+        </div>
+        
+        <div id="workspace"></div>
+        
+        <div class="section-title">Hasil Output</div>
+        <div id="output-container" class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <div class="font-medium text-slate-700 mb-2">Output Saat Ini:</div>
+                    <div id="current-output" class="text-lg font-semibold">-</div>
+                </div>
+                <div>
+                    <div class="font-medium text-slate-700 mb-2">Status Output:</div>
+                    <div id="output-visual" class="flex items-center gap-2">
+                        <div class="output-led"></div>
+                        <span id="output-text">Tidak aktif</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-title">Tabel Kebenaran</div>
+        <div id="truth-table-container" class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+            <div class="overflow-auto">
+                <table class="truth-table">
+                    <thead id="truth-table-header"></thead>
+                    <tbody id="truth-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-<section id="and-gate" aria-labelledby="and-title">
-  <h2 id="and-title">Gerbang AND</h2>
-  <p>Gerbang AND menghasilkan keluaran 1 jika dan hanya jika semua masukannya bernilai 1.</p>
-  <div>
-    <label><input type="checkbox" id="and-a" aria-label="Input A untuk gerbang AND" /> Input A</label>
-    <label><input type="checkbox" id="and-b" aria-label="Input B untuk gerbang AND" /> Input B</label>
-  </div>
-  <div class="output" aria-live="polite" aria-atomic="true">Output: <span id="and-output">0</span></div>
-  <button type="button" class="show-truth-btn" aria-controls="and-truth" aria-expanded="false" data-target="and-truth">
-    Tampilkan Tabel Kebenaran
-  </button>
-  <table class="truth-table" aria-hidden="true" id="and-truth">
-    <thead>
-      <tr><th>A</th><th>B</th><th>Output</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-  <h3>Persamaan Logika</h3>
-  <pre>Y = A · B</pre>
-</section>
-
-<section id="or-gate" aria-labelledby="or-title">
-  <h2 id="or-title">Gerbang OR</h2>
-  <p>Gerbang OR menghasilkan keluaran 1 jika salah satu atau kedua masukannya bernilai 1.</p>
-  <div>
-    <label><input type="checkbox" id="or-a" aria-label="Input A untuk gerbang OR" /> Input A</label>
-    <label><input type="checkbox" id="or-b" aria-label="Input B untuk gerbang OR" /> Input B</label>
-  </div>
-  <div class="output" aria-live="polite" aria-atomic="true">Output: <span id="or-output">0</span></div>
-  <button type="button" class="show-truth-btn" aria-controls="or-truth" aria-expanded="false" data-target="or-truth">
-    Tampilkan Tabel Kebenaran
-  </button>
-  <table class="truth-table" aria-hidden="true" id="or-truth">
-    <thead>
-      <tr><th>A</th><th>B</th><th>Output</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-  <h3>Persamaan Logika</h3>
-  <pre>Y = A + B</pre>
-</section>
-
-<section id="not-gate" aria-labelledby="not-title">
-  <h2 id="not-title">Gerbang NOT</h2>
-  <p>Gerbang NOT menghasilkan keluaran yang merupakan kebalikan (invers) dari inputnya.</p>
-  <div>
-    <label><input type="checkbox" id="not-a" aria-label="Input A untuk gerbang NOT" /> Input A</label>
-  </div>
-  <div class="output" aria-live="polite" aria-atomic="true">Output: <span id="not-output">1</span></div>
-  <button type="button" class="show-truth-btn" aria-controls="not-truth" aria-expanded="false" data-target="not-truth">
-    Tampilkan Tabel Kebenaran
-  </button>
-  <table class="truth-table" aria-hidden="true" id="not-truth">
-    <thead>
-      <tr><th>A</th><th>Output</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-  <h3>Persamaan Logika</h3>
-  <pre>Y = Ā</pre>
-</section>
-
-<section id="xor-gate" aria-labelledby="xor-title">
-  <h2 id="xor-title">Gerbang EX‑OR</h2>
-  <p>Gerbang EX‑OR (Exclusive OR) menghasilkan keluaran 1 hanya jika inputnya berbeda.</p>
-  <div>
-    <label><input type="checkbox" id="xor-a" aria-label="Input A untuk gerbang EX‑OR" /> Input A</label>
-    <label><input type="checkbox" id="xor-b" aria-label="Input B untuk gerbang EX‑OR" /> Input B</label>
-  </div>
-  <div class="output" aria-live="polite" aria-atomic="true">Output: <span id="xor-output">0</span></div>
-  <button type="button" class="show-truth-btn" aria-controls="xor-truth" aria-expanded="false" data-target="xor-truth">
-    Tampilkan Tabel Kebenaran
-  </button>
-  <table class="truth-table" aria-hidden="true" id="xor-truth">
-    <thead>
-      <tr><th>A</th><th>B</th><th>Output</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-  <h3>Persamaan Logika</h3>
-  <pre>Y = A ⊕ B</pre>
-</section>
-
-<script>
-  function fillTruthBody(tableId) {
-    const tbody = document.querySelector(`#${tableId} tbody`);
-    if (tbody.dataset.filled) return;
-
-    let rows = '';
-    switch (tableId) {
-      case 'and-truth':
-        rows = `
-          <tr><td>0</td><td>0</td><td>0</td></tr>
-          <tr><td>0</td><td>1</td><td>0</td></tr>
-          <tr><td>1</td><td>0</td><td>0</td></tr>
-          <tr><td>1</td><td>1</td><td>1</td></tr>`;
-        break;
-      case 'or-truth':
-        rows = `
-          <tr><td>0</td><td>0</td><td>0</td></tr>
-          <tr><td>0</td><td>1</td><td>1</td></tr>
-          <tr><td>1</td><td>0</td><td>1</td></tr>
-          <tr><td>1</td><td>1</td><td>1</td></tr>`;
-        break;
-      case 'not-truth':
-        rows = `
-          <tr><td>0</td><td>1</td></tr>
-          <tr><td>1</td><td>0</td></tr>`;
-        break;
-      case 'xor-truth':
-        rows = `
-          <tr><td>0</td><td>0</td><td>0</td></tr>
-          <tr><td>0</td><td>1</td><td>1</td></tr>
-          <tr><td>1</td><td>0</td><td>1</td></tr>
-          <tr><td>1</td><td>1</td><td>0</td></tr>`;
-        break;
-    }
-
-    tbody.innerHTML = rows;
-    tbody.dataset.filled = 'true';
-  }
-
-  // Gate update functions
-  function updateAndGate() {
-    const a = +document.getElementById('and-a').checked;
-    const b = +document.getElementById('and-b').checked;
-    document.getElementById('and-output').textContent = a & b;
-  }
-
-  function updateOrGate() {
-    const a = +document.getElementById('or-a').checked;
-    const b = +document.getElementById('or-b').checked;
-    document.getElementById('or-output').textContent = a | b;
-  }
-
-  function updateNotGate() {
-    const a = +document.getElementById('not-a').checked;
-    document.getElementById('not-output').textContent = a ? 0 : 1;
-  }
-
-  function updateXorGate() {
-    const a = +document.getElementById('xor-a').checked;
-    const b = +document.getElementById('xor-b').checked;
-    document.getElementById('xor-output').textContent = a ^ b;
-  }
-
-  // Setup listeners
-  document.querySelectorAll('button.show-truth-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const tableId = btn.getAttribute('data-target');
-      const table = document.getElementById(tableId);
-      const expanded = btn.getAttribute('aria-expanded') === 'true';
-      if (!expanded) {
-        fillTruthBody(tableId);
-        table.style.display = 'table';
-      } else {
-        table.style.display = 'none';
-      }
-      btn.setAttribute('aria-expanded', !expanded);
-      btn.textContent = expanded ? 'Tampilkan Tabel Kebenaran' : 'Sembunyikan Tabel Kebenaran';
-      table.setAttribute('aria-hidden', expanded);
-    });
-  });
-
-  // Input listeners
-  ['and-a', 'and-b'].forEach(id => document.getElementById(id).addEventListener('change', updateAndGate));
-  ['or-a', 'or-b'].forEach(id => document.getElementById(id).addEventListener('change', updateOrGate));
-  document.getElementById('not-a').addEventListener('change', updateNotGate);
-  ['xor-a', 'xor-b'].forEach(id => document.getElementById(id).addEventListener('change', updateXorGate));
-
-  // Initial render
-  updateAndGate();
-  updateOrGate();
-  updateNotGate();
-  updateXorGate();
-</script>
+    <script>
+        // State variables
+        let gates = [];
+        let wires = [];
+        let selectedConnector = null;
+        let draggedGate = null;
+        let offsetX = 0;
+        let offsetY = 0;
+        let gateIdCounter = 0;
+        
+        // DOM elements
+        const workspace = document.getElementById('workspace');
+        const paletteGates = document.querySelectorAll('.palette-gate');
+        const btnEvaluate = document.getElementById('btn-evaluate');
+        const btnClear = document.getElementById('btn-clear');
+        const truthTableContainer = document.getElementById('truth-table-container');
+        const truthTableHeader = document.getElementById('truth-table-header');
+        const truthTableBody = document.getElementById('truth-table-body');
+        const currentOutput = document.getElementById('current-output');
+        const outputVisual = document.getElementById('output-visual');
+        const outputText = document.getElementById('output-text');
+        const outputLed = document.querySelector('.output-led');
+        
+        // Gate definitions
+        const gateTypes = {
+            'AND': { inputs: 2, outputs: 1, operation: (a, b) => a && b },
+            'OR': { inputs: 2, outputs: 1, operation: (a, b) => a || b },
+            'NOT': { inputs: 1, outputs: 1, operation: (a) => !a },
+            'NAND': { inputs: 2, outputs: 1, operation: (a, b) => !(a && b) },
+            'NOR': { inputs: 2, outputs: 1, operation: (a, b) => !(a || b) },
+            'XOR': { inputs: 2, outputs: 1, operation: (a, b) => a !== b },
+            'XNOR': { inputs: 2, outputs: 1, operation: (a, b) => a === b },
+            'INPUT': { inputs: 0, outputs: 1, operation: null },
+            'OUTPUT': { inputs: 1, outputs: 0, operation: null }
+        };
+        
+        // Event listeners
+        paletteGates.forEach(gate => {
+            gate.addEventListener('click', () => {
+                const type = gate.getAttribute('data-type');
+                createGate(type, 100, 100);
+            });
+        });
+        
+        btnEvaluate.addEventListener('click', evaluateCircuit);
+        btnClear.addEventListener('click', clearWorkspace);
+        
+        // Initialize
+        function init() {
+            workspace.addEventListener('mousedown', handleWorkspaceMouseDown);
+            workspace.addEventListener('mousemove', handleWorkspaceMouseMove);
+            workspace.addEventListener('mouseup', handleWorkspaceMouseUp);
+        }
+        
+        function createGate(type, x, y) {
+            const gateId = `gate-${gateIdCounter++}`;
+            const gate = document.createElement('div');
+            gate.className = 'gate';
+            gate.id = gateId;
+            
+            if (type === 'OUTPUT') {
+                gate.className = 'output-display';
+                gate.innerHTML = `
+                    <div class="output-label">Output</div>
+                    <div class="output-value">-</div>
+                    <div class="output-led"></div>
+                `;
+            } else {
+                gate.innerHTML = `
+                    <div class="gate-name">${type}</div>
+                `;
+            }
+            
+            gate.style.left = `${x}px`;
+            gate.style.top = `${y}px`;
+            
+            const gateData = {
+                id: gateId,
+                type,
+                element: gate,
+                inputs: [],
+                outputs: [],
+                value: type === 'INPUT' ? false : null,
+                position: { x, y }
+            };
+            
+            // Add input connectors
+            for (let i = 0; i < gateTypes[type].inputs; i++) {
+                const input = document.createElement('div');
+                input.className = 'connector input-connector';
+                input.dataset.gateId = gateId;
+                input.dataset.connectorIndex = i;
+                input.dataset.type = 'input';
+                input.style.top = `${(i + 1) * (80 / (gateTypes[type].inputs + 1))}px`;
+                gateData.inputs.push({ element: input, connectedTo: null });
+                gate.appendChild(input);
+            }
+            
+            // Add output connectors
+            for (let i = 0; i < gateTypes[type].outputs; i++) {
+                const output = document.createElement('div');
+                output.className = 'connector output-connector';
+                output.dataset.gateId = gateId;
+                output.dataset.connectorIndex = i;
+                output.dataset.type = 'output';
+                output.style.top = `${(i + 1) * (80 / (gateTypes[type].outputs + 1))}px`;
+                gateData.outputs.push({ element: output, connectedTo: null });
+                gate.appendChild(output);
+            }
+            
+            // Add event listeners
+            gate.addEventListener('mousedown', (e) => {
+                if (e.target.classList.contains('connector')) return;
+                startGateDrag(gate, e);
+            });
+            
+            const connectors = gate.querySelectorAll('.connector');
+            connectors.forEach(connector => {
+                connector.addEventListener('mousedown', (e) => {
+                    e.stopPropagation();
+                    startConnectorSelection(connector);
+                });
+            });
+            
+            workspace.appendChild(gate);
+            gates.push(gateData);
+            
+            return gateData;
+        }
+        
+        function startGateDrag(gateElement, e) {
+            draggedGate = gateElement;
+            const rect = gateElement.getBoundingClientRect();
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
+            
+            gateElement.classList.add('active');
+            document.addEventListener('mouseup', stopGateDrag);
+        }
+        
+        function handleGateDrag(e) {
+            if (!draggedGate) return;
+            
+            const workspaceRect = workspace.getBoundingClientRect();
+            let x = e.clientX - workspaceRect.left - offsetX;
+            let y = e.clientY - workspaceRect.top - offsetY;
+            
+            // Constrain to workspace
+            x = Math.max(0, Math.min(x, workspaceRect.width - draggedGate.offsetWidth));
+            y = Math.max(0, Math.min(y, workspaceRect.height - draggedGate.offsetHeight));
+            
+            draggedGate.style.left = `${x}px`;
+            draggedGate.style.top = `${y}px`;
+            
+            // Update wires connected to this gate
+            const gateData = gates.find(g => g.id === draggedGate.id);
+            if (gateData) {
+                gateData.position = { x, y };
+                updateConnectedWires(gateData);
+            }
+        }
+        
+        function stopGateDrag() {
+            if (draggedGate) {
+                draggedGate.classList.remove('active');
+                draggedGate = null;
+            }
+            document.removeEventListener('mouseup', stopGateDrag);
+        }
+        
+        function startConnectorSelection(connector) {
+            // If no connector is selected, select this one
+            if (!selectedConnector) {
+                selectedConnector = connector;
+                connector.classList.add('active');
+                return;
+            }
+            
+            // If same connector is clicked again, deselect it
+            if (selectedConnector === connector) {
+                selectedConnector.classList.remove('active');
+                selectedConnector = null;
+                return;
+            }
+            
+            // If different connector is selected, try to connect them
+            const connector1 = selectedConnector;
+            const connector2 = connector;
+            
+            // Check if connection is valid (input to output or vice versa)
+            const type1 = connector1.dataset.type;
+            const type2 = connector2.dataset.type;
+            
+            if (type1 !== type2) {
+                createWire(connector1, connector2);
+            }
+            
+            // Deselect connectors
+            selectedConnector.classList.remove('active');
+            selectedConnector = null;
+            connector.classList.remove('active');
+        }
+        
+        function createWire(connector1, connector2) {
+            // Determine which is input and which is output
+            let fromConnector, toConnector;
+            if (connector1.dataset.type === 'output') {
+                fromConnector = connector1;
+                toConnector = connector2;
+            } else {
+                fromConnector = connector2;
+                toConnector = connector1;
+            }
+            
+            // Check if output is already connected
+            const fromGate = gates.find(g => g.id === fromConnector.dataset.gateId);
+            const fromConnectorIndex = parseInt(fromConnector.dataset.connectorIndex);
+            const fromConnectorData = fromGate.outputs[fromConnectorIndex];
+            
+            if (fromConnectorData.connectedTo) {
+                // Connection already exists, we might want to remove it or show error
+                return;
+            }
+            
+            // Check if input is already connected
+            const toGate = gates.find(g => g.id === toConnector.dataset.gateId);
+            const toConnectorIndex = parseInt(toConnector.dataset.connectorIndex);
+            const toConnectorData = toGate.inputs[toConnectorIndex];
+            
+            if (toConnectorData.connectedTo) {
+                // Connection already exists, we might want to remove it or show error
+                return;
+            }
+            
+            // Create wire element
+            const wire = document.createElement('div');
+            wire.className = 'wire';
+            workspace.appendChild(wire);
+            
+            // Calculate positions
+            const fromRect = fromConnector.getBoundingClientRect();
+            const toRect = toConnector.getBoundingClientRect();
+            const workspaceRect = workspace.getBoundingClientRect();
+            
+            const fromX = fromRect.left + fromRect.width / 2 - workspaceRect.left;
+            const fromY = fromRect.top + fromRect.height / 2 - workspaceRect.top;
+            const toX = toRect.left + toRect.width / 2 - workspaceRect.left;
+            const toY = toRect.top + toRect.height / 2 - workspaceRect.top;
+            
+            const length = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2));
+            const angle = Math.atan2(toY - fromY, toX - fromX);
+            
+            wire.style.width = `${length}px`;
+            wire.style.left = `${fromX}px`;
+            wire.style.top = `${fromY}px`;
+            wire.style.transform = `rotate(${angle}rad)`;
+            
+            // Store wire data
+            const wireData = {
+                element: wire,
+                from: {
+                    gateId: fromGate.id,
+                    connectorIndex: fromConnectorIndex,
+                    connectorElement: fromConnector
+                },
+                to: {
+                    gateId: toGate.id,
+                    connectorIndex: toConnectorIndex,
+                    connectorElement: toConnector
+                }
+            };
+            
+            wires.push(wireData);
+            
+            // Update gate connection data
+            fromGate.outputs[fromConnectorIndex].connectedTo = wireData;
+            toGate.inputs[toConnectorIndex].connectedTo = wireData;
+            
+            // If input is connected to an INPUT gate, update its appearance
+            if (fromGate.type === 'INPUT') {
+                fromConnector.classList.add('active');
+            }
+            
+            return wireData;
+        }
+        
+        function updateConnectedWires(gateData) {
+            // Update all wires connected to this gate
+            gateData.inputs.forEach(input => {
+                if (input.connectedTo) {
+                    updateWirePosition(input.connectedTo);
+                }
+            });
+            
+            gateData.outputs.forEach(output => {
+                if (output.connectedTo) {
+                    updateWirePosition(output.connectedTo);
+                }
+            });
+        }
+        
+        function updateWirePosition(wireData) {
+            const fromConnector = wireData.from.connectorElement;
+            const toConnector = wireData.to.connectorElement;
+            const wire = wireData.element;
+            
+            const fromRect = fromConnector.getBoundingClientRect();
+            const toRect = toConnector.getBoundingClientRect();
+            const workspaceRect = workspace.getBoundingClientRect();
+            
+            const fromX = fromRect.left + fromRect.width / 2 - workspaceRect.left;
+            const fromY = fromRect.top + fromRect.height / 2 - workspaceRect.top;
+            const toX = toRect.left + toRect.width / 2 - workspaceRect.left;
+            const toY = toRect.top + toRect.height / 2 - workspaceRect.top;
+            
+            const length = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2));
+            const angle = Math.atan2(toY - fromY, toX - fromX);
+            
+            wire.style.width = `${length}px`;
+            wire.style.left = `${fromX}px`;
+            wire.style.top = `${fromY}px`;
+            wire.style.transform = `rotate(${angle}rad)`;
+        }
+        
+        function evaluateCircuit() {
+            // Reset all gate values except inputs
+            gates.forEach(gate => {
+                if (gate.type !== 'INPUT') {
+                    gate.value = null;
+                }
+            });
+            
+            // Find all input gates
+            const inputGates = gates.filter(gate => gate.type === 'INPUT');
+            const inputCount = inputGates.length;
+            
+            if (inputCount === 0) {
+                alert('Tidak ada input di rangkaian!');
+                return;
+            }
+            
+            // Generate all possible input combinations
+            const combinations = Math.pow(2, inputCount);
+            
+            // Prepare truth table
+            truthTableHeader.innerHTML = '';
+            truthTableBody.innerHTML = '';
+            
+            const headerRow = document.createElement('tr');
+            
+            // Add input headers
+            inputGates.forEach((gate, index) => {
+                const th = document.createElement('th');
+                th.textContent = `Input ${index + 1}`;
+                headerRow.appendChild(th);
+            });
+            
+            // Add output header
+            const outputTh = document.createElement('th');
+            outputTh.textContent = 'Output';
+            headerRow.appendChild(outputTh);
+            
+            truthTableHeader.appendChild(headerRow);
+            
+            // Find output gates (gates with outputs not connected to anything or OUTPUT type)
+            const outputGates = gates.filter(gate => {
+                return gate.outputs.some(output => !output.connectedTo) || gate.type === 'OUTPUT';
+            });
+            
+            // If no explicit outputs, use last gate in the array
+            const gatesToEvaluate = outputGates.length > 0 ? outputGates : [gates[gates.length - 1]];
+            
+            // Evaluate each combination
+            for (let i = 0; i < combinations; i++) {
+                // Set input values based on combination
+                inputGates.forEach((gate, index) => {
+                    gate.value = Boolean((i >> index) & 1);
+                    // Update input connector appearance
+                    gate.outputs[0].connectorElement.classList.toggle('active', gate.value);
+                });
+                
+                // Evaluate circuit (using topological sort)
+                const evaluatedGates = new Set();
+                
+                // Helper function to evaluate a gate
+                function evaluateGate(gate) {
+                    // If already evaluated, return the value
+                    if (evaluatedGates.has(gate.id)) return gate.value;
+                    
+                    // Mark as evaluated to prevent cycles
+                    evaluatedGates.add(gate.id);
+                    
+                    // For input gates, just return their value
+                    if (gate.type === 'INPUT') {
+                        return gate.value;
+                    }
+                    
+                    // Get input values
+                    const inputValues = gate.inputs.map(input => {
+                        if (!input.connectedTo) return false; // Unconnected inputs default to false
+                        
+                        const fromWire = input.connectedTo;
+                        const fromGate = gates.find(g => g.id === fromWire.from.gateId);
+                        return evaluateGate(fromGate);
+                    });
+                    
+                    // Perform gate operation
+                    if (gate.type === 'OUTPUT') {
+                        gate.value = inputValues[0];
+                    } else if (gateTypes[gate.type].inputs === 1) {
+                        gate.value = gateTypes[gate.type].operation(inputValues[0]);
+                    } else {
+                        gate.value = gateTypes[gate.type].operation(inputValues[0], inputValues[1]);
+                    }
+                    
+                    // Update output connector appearance
+                    gate.outputs.forEach(output => {
+                        if (output.connectorElement) {
+                            output.connectorElement.classList.toggle('active', gate.value);
+                        }
+                        if (output.connectedTo) {
+                            output.connectedTo.element.classList.toggle('active', gate.value);
+                        }
+                    });
+                    
+                    // Update output display if this is an OUTPUT gate
+                    if (gate.type === 'OUTPUT') {
+                        const outputValueElement = gate.element.querySelector('.output-value');
+                        const outputLedElement = gate.element.querySelector('.output-led');
+                        
+                        if (outputValueElement) {
+                            outputValueElement.textContent = gate.value ? '1' : '0';
+                            outputValueElement.classList.toggle('false', !gate.value);
+                        }
+                        
+                        if (outputLedElement) {
+                            outputLedElement.classList.toggle('active', gate.value);
+                        }
+                    }
+                    
+                    return gate.value;
+                }
+                
+                const outputValues = gatesToEvaluate.map(gate => evaluateGate(gate));
+                const finalOutput = outputValues.length === 1 ? outputValues[0] : outputValues;
+                
+                // Update current output display
+                if (i === combinations - 1) {
+                    updateOutputDisplay(finalOutput);
+                }
+                
+                // Add row to truth table
+                const row = document.createElement('tr');
+                
+                // Add input values
+                inputGates.forEach(gate => {
+                    const td = document.createElement('td');
+                    td.textContent = gate.value ? '1' : '0';
+                    row.appendChild(td);
+                });
+                
+                // Add output value
+                const outputTd = document.createElement('td');
+                if (Array.isArray(finalOutput)) {
+                    outputTd.textContent = finalOutput.map(v => v ? '1' : '0').join(', ');
+                } else {
+                    outputTd.textContent = finalOutput ? '1' : '0';
+                }
+                row.appendChild(outputTd);
+                
+                truthTableBody.appendChild(row);
+            }
+        }
+        
+        function updateOutputDisplay(outputValue) {
+            if (Array.isArray(outputValue)) {
+                currentOutput.textContent = outputValue.map(v => v ? '1' : '0').join(', ');
+            } else {
+                currentOutput.textContent = outputValue ? '1' : '0';
+            }
+            
+            const isActive = Array.isArray(outputValue) ? outputValue.some(v => v) : outputValue;
+            outputLed.classList.toggle('active', isActive);
+            outputText.textContent = isActive ? 'Aktif' : 'Tidak aktif';
+        }
+        
+        function clearWorkspace() {
+            // Remove all wires and gates from DOM
+            wires.forEach(wire => wire.element.remove());
+            gates.forEach(gate => gate.element.remove());
+            
+            // Reset state
+            gates = [];
+            wires = [];
+            selectedConnector = null;
+            draggedGate = null;
+            gateIdCounter = 0;
+            
+            // Reset output display
+            currentOutput.textContent = '-';
+            outputLed.classList.remove('active');
+            outputText.textContent = 'Tidak aktif';
+        }
+        
+        function handleWorkspaceMouseDown(e) {
+            if (e.target === workspace) {
+                // Deselect connector if clicking on empty workspace
+                if (selectedConnector) {
+                    selectedConnector.classList.remove('active');
+                    selectedConnector = null;
+                }
+            }
+        }
+        
+        function handleWorkspaceMouseMove(e) {
+            handleGateDrag(e);
+        }
+        
+        function handleWorkspaceMouseUp(e) {
+            // Handle any mouse up events on workspace if needed
+        }
+        
+        // Initialize the application
+        init();
+        
+        // Add some example gates for demonstration
+        setTimeout(() => {
+            const input1 = createGate('INPUT', 50, 100);
+            const input2 = createGate('INPUT', 50, 200);
+            const andGate = createGate('AND', 200, 150);
+            const outputGate = createGate('OUTPUT', 350, 150);
+            
+            // Simulate connections
+            setTimeout(() => {
+                startConnectorSelection(input1.outputs[0].element);
+                setTimeout(() => {
+                    startConnectorSelection(andGate.inputs[0].element);
+                    setTimeout(() => {
+                        startConnectorSelection(input2.outputs[0].element);
+                        setTimeout(() => {
+                            startConnectorSelection(andGate.inputs[1].element);
+                            setTimeout(() => {
+                                startConnectorSelection(andGate.outputs[0].element);
+                                setTimeout(() => {
+                                    startConnectorSelection(outputGate.inputs[0].element);
+                                    setTimeout(() => {
+                                        evaluateCircuit();
+                                    }, 100);
+                                }, 100);
+                            }, 100);
+                        }, 100);
+                    }, 100);
+                }, 100);
+            }, 100);
+        }, 500);
+    </script>
 </body>
 </html>
